@@ -2,15 +2,17 @@
 
 int main(void)
 {
-    // 배열에서 최대값 구하기
+    // 요소의 값을 교환하는 방식으로 배열에서 최솟값 구하기
 
     int aList[5] = {30, 40, 10, 50, 20};
     int i = 0;
 
     // 코드 작성
     for(int j=1; j < 5; ++j){
-        if (aList[0] < aList[j]){
-            aList[0] = aList[j];
+        if (aList[0] > aList[j]){
+            int temp = aList[j];
+            aList[j] = aList[0];
+            aList[0] = temp;
         }
     }
 
@@ -21,10 +23,10 @@ int main(void)
 
     putchar('\n');
 
-    printf("MAX : %d\n", aList[0]);
+    printf("MIN : %d\n", aList[0]);
     return 0;
 }
 
 // 예
-// 50 40 10 50 20
-// MAX: 50
+// 10 40  30 50 20
+// MIN: 10
