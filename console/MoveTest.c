@@ -4,8 +4,8 @@
 #include <Windows.h>
 #include <conio.h>
 
-#define MAIN_X 4 //게임판 가로크기 
-#define MAIN_Y 4 //게임판 세로크기 
+#define MAIN_X 8 //게임판 가로크기 
+#define MAIN_Y 8 //게임판 세로크기 
 #define MAIN_X_ADJ 0 //게임판 위치조정 
 #define MAIN_Y_ADJ 0 //게임판 위치조정
 #define SUCCESS_X 10 //성공문구 뜨는 X 위치
@@ -26,7 +26,7 @@ int goal_y = MAIN_Y - 1; //y축 목표 위치
 #define GOAL_BLOCK -1 // 목표 블럭
 
 int key; //키보드로 입력받은 키값을 저장
-//키보드값들 
+		 //키보드값들 
 #define LEFT 75 //좌
 #define RIGHT 77 //우
 #define UP 72 //위
@@ -48,8 +48,8 @@ void draw_block(int x, int y);
 
 //gotoxy함수
 //콘솔의 커서 좌표를 원하는 위치로 이동시키는 함수
-void gotoxy(int x, int y) { 
-	COORD pos = { 2*x,y }; // x에 2를 곱해줘야 표시할 위치가 확보된다. 그냥 하면 출력되는 문자가 짤림!!
+void gotoxy(int x, int y) {
+	COORD pos = { 2 * x,y }; // x에 2를 곱해줘야 표시할 위치가 확보된다. 그냥 하면 출력되는 문자가 짤림!!
 	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), pos);
 }
 
@@ -91,7 +91,7 @@ int main(void) {
 		check_success(); //성공여부 확인
 		Sleep(100);
 	}
-	
+
 	//return 0;
 }
 
@@ -100,14 +100,17 @@ void reset(void) {
 	reset_goal(); //목표 위치 초기화
 	reset_main_org(); // main_org를 초기화
 	draw_title(); // 첫화면 그림
-	//draw_main(); // 게임판을 그림
+				  //draw_main(); // 게임판을 그림
 }
 
 // 목표위치 설정
 void reset_goal(void) {
 	srand((unsigned)time(NULL));
-	int random_x = (rand() % goal_x) + (goal_x / 2); // 너무 가까우면 안되니까 1/2한 값보다는 크게 나오게 하자
-	int random_y = (rand() % goal_y) + (goal_y / 2);
+	int random_x = (rand() % (goal_x - 1)) + ((goal_x - 2) / 2);
+	int random_y = (rand() % (goal_y - 1)) + ((goal_y - 2) / 2);
+
+	//gotoxy(0, 20); printf("목표는 y=%d, x=%d", random_y, random_x);
+
 	goal_x = random_x;
 	goal_y = random_y;
 }
@@ -132,7 +135,7 @@ void draw_title(void) {
 	int i = 0, j = 0;
 	for (i = 0; i < MAIN_Y; i++) {
 		for (j = 0; j < MAIN_X; j++) {
-			draw_block(j,i);
+			draw_block(j, i);
 		}
 	}
 }
@@ -180,13 +183,13 @@ void check_key(void) {
 			do { key = _getch(); } while (key == 224);//방향키지시값을 버림 
 			switch (key) {
 			case LEFT: //왼쪽키 눌렀을때  
-				//왼쪽으로 갈 수 있는지 체크 후 가능하면 이동
-				if (this_x-1 >= 0) {
+					   //왼쪽으로 갈 수 있는지 체크 후 가능하면 이동
+				if (this_x - 1 >= 0) {
 					main_org[this_y][this_x] = FIELD_BLOCK;
 					this_x = this_x - 1;
 					main_org[this_y][this_x] = PLAYER_BLOCK;
 				}
-				break;                            
+				break;
 			case RIGHT: //오른쪽 방향키 눌렀을때- 위와 동일하게 처리됨 
 				if (this_x + 1 < MAIN_X) {
 					main_org[this_y][this_x] = FIELD_BLOCK;
@@ -208,7 +211,7 @@ void check_key(void) {
 					main_org[this_y][this_x] = PLAYER_BLOCK;
 				}
 				break;
-			}                    
+			}
 		}
 		else { //방향키가 아닌경우 
 			switch (key) {
@@ -225,11 +228,11 @@ void check_key(void) {
 void check_success() {
 	if (this_x == goal_x && this_y == goal_y) {
 		gotoxy(SUCCESS_X, SUCCESS_Y + 0); printf("▤▤▤▤▤▤▤▤▤▤▤▤▤▤▤▤▤"); //게임오버 메세지 
-		gotoxy(SUCCESS_X, SUCCESS_Y + 1); printf("▤           Success!           ▤");		
+		gotoxy(SUCCESS_X, SUCCESS_Y + 1); printf("▤           Success!           ▤");
 		gotoxy(SUCCESS_X, SUCCESS_Y + 2); printf("▤▤▤▤▤▤▤▤▤▤▤▤▤▤▤▤▤\n\n\n"); //게임오버 메세지
 
 		gotoxy(0, SUCCESS_Y + 5); printf("Press any key to exit!");
-		
+
 		_getch(); //키입력시까지 대기 
 
 		exit(0); //게임종료 
